@@ -1,0 +1,25 @@
+pipeline {
+    agent any
+    stages {
+        stage('gitfecth') {
+            steps {
+                checkout scm
+            }
+        }
+        stage('maventest') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+        stage('mavenbuild') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+        stage('deployment_ansible') {
+            steps {
+                sh 'ansible-playbook -i hosts.ini java_deployment.yaml'
+            }
+        }
+    }
+}

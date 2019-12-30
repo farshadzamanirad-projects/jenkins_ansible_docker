@@ -1,0 +1,48 @@
+---
+- hosts: javasrvs
+  name: java_deployments
+  tasks: 
+    - name: copy to destintion(server)
+      copy:
+        src: /var/lib/jenkins/workspace/springboot_docker/target/myapp-1.0.jar
+        dest: /root/
+        owner: root
+        group: root
+        mode: '0755'
+        
+    - name: Copy dockerfile    
+      copy:
+        src: /var/lib/jenkins/workspace/springboot_docker/Dockerfile
+        dest: /root/
+        owner: root
+        group: root
+        mode: '0755'
+    
+    - name: test the current path and whoami
+      shell: pwd > curpa.txt && whoami >> curpa.txt
+
+    - name: installing "docker-py with pip"
+      pip: 
+        name: docker-py
+
+    - name: dockerfile
+      docker_image: 
+        path: /root 
+        name: mydocker_image 
+        state: present
+    
+    - name: running container
+      docker_container:
+        name: mydocker_container
+        image: mydocker_image:latest
+        state: started
+        command: ["java", "-jar", "/myapp-1.0.jar"]
+        ports: 
+          - "12345:8080"
+    - name: remove external file(Dockerfile)
+      file: 
+        path: /root/{{ item }}
+        state: absent
+      loop:
+        - Dockerfile
+        - myapp-1.0.jar
