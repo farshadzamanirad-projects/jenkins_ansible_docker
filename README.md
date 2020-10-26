@@ -1,4 +1,4 @@
-1)Prequisites:
+1)Prerequisites:
 Add these three lines which are our servers for scenario to /etc/hosts of every single servers(the whole four of them)
 ```
 192.168.1.30 myjenkins #Ansible,Maven installed
